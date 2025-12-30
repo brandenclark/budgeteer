@@ -1,128 +1,150 @@
-Welcome to your new TanStack app! 
+# Budgeteer
 
-# Getting Started
+A modern budgeting application built with TanStack Start, Solid, Tailwind CSS, and Supabase.
 
-To run this application:
+## Tech Stack
+
+- **Framework**: [TanStack Start](https://tanstack.com/start) with [Solid](https://www.solidjs.com/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **UI Components**: [Kobalte](https://kobalte.dev/) (accessible primitives)
+- **Database & Auth**: [Supabase](https://supabase.com/)
+- **Type Safety**: TypeScript with generated database types
+
+## Features
+
+- ✅ Server-side rendering (SSR)
+- ✅ Authentication with Supabase
+- ✅ Protected routes
+- ✅ Repository pattern for data access
+- ✅ Accessible UI components
+- ✅ Type-safe data fetching
+- ✅ Dark/light theme support
+- ✅ Responsive design
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm
+- Supabase account
+
+### Installation
 
 ```bash
+# Install dependencies
 pnpm install
-pnpm start
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
+
+# Run migrations (requires Supabase CLI)
+supabase link --project-ref your-project-ref
+supabase db push
+
+# Start development server
+pnpm dev
 ```
 
-# Building For Production
+Visit http://localhost:3000
 
-To build this application for production:
+### Build for Production
 
 ```bash
 pnpm build
 ```
 
-## Styling
+## Documentation
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+- [Architecture Overview](./docs/ARCHITECTURE.md) - Tech stack and design decisions
+- [Routing Guide](./docs/ROUTING.md) - File-based routing patterns
+- [Data Fetching](./docs/DATA-FETCHING.md) - Repository pattern usage
+- [Authentication](./docs/AUTHENTICATION.md) - Auth implementation
+- [Components](./docs/COMPONENTS.md) - UI component system
+- [Deployment](./docs/DEPLOYMENT.md) - Production deployment
 
+## Project Structure
 
-
-## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add another a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/solid-router`.
-
-```tsx
-import { Link } from "@tanstack/solid-router";
+```
+src/
+├── routes/           # File-based routing
+├── components/       # Reusable components
+│   └── ui/          # UI primitives (Button, etc.)
+├── lib/
+│   ├── auth/        # Authentication layer
+│   ├── data/        # Data access layer
+│   ├── supabase/    # Supabase clients
+│   └── utils.ts     # Utility functions
+└── styles.css       # Global styles & theme
 ```
 
-Then anywhere in your JSX you can use it like so:
+## Key Patterns
+
+### Authentication
 
 ```tsx
-<Link to="/about">About</Link>
+import { useAuth } from '~/lib/auth'
+
+function Profile() {
+  const auth = useAuth()
+  return <div>Welcome, {auth.user()?.email}</div>
+}
 ```
 
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/solid/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
+### Protected Routes
 
 ```tsx
-import { Outlet, createRootRoute } from '@tanstack/solid-router'
-import { TanStackRouterDevtools } from '@tanstack/solid-router-devtools'
+import { requireAuth } from '~/lib/auth'
 
-import { Link } from "@tanstack/solid-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
+export const Route = createFileRoute('/dashboard')({
+  beforeLoad: async () => await requireAuth(),
+  component: DashboardPage,
 })
 ```
 
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/solid/guide/routing-concepts#layouts).
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
+### Data Fetching
 
 ```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
+import { createRepository } from '~/lib/data'
+
+const repo = createRepository(supabase, 'users', 'data-api')
+const { data } = await repo.findMany({ limit: 10 })
 ```
 
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/solid/guide/data-loading#loader-parameters).
+### UI Components
 
-# Demo files
+```tsx
+import { Button } from '~/components/ui'
 
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
+<Button variant="destructive">Delete</Button>
+```
 
+## Scripts
 
+```bash
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm start        # Run production build
+pnpm typecheck    # Run TypeScript checks
+```
 
-# Learn More
+## Environment Variables
 
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+Required in `.env.local`:
+
+```
+VITE_SUPABASE_URL=your_project_url
+VITE_SUPABASE_ANON_KEY=your_anon_key
+```
+
+## Contributing
+
+This project uses:
+- [Beads](https://github.com/beads-data-structure/beads) for issue tracking
+- Conventional commits
+- TypeScript strict mode
+
+## License
+
+MIT
