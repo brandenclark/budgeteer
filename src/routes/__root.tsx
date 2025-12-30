@@ -10,6 +10,7 @@ import { HydrationScript } from 'solid-js/web'
 import { Suspense } from 'solid-js'
 
 import Header from '../components/Header'
+import { AuthProvider } from '../lib/auth'
 
 import styleCss from '../styles.css?url'
 
@@ -29,10 +30,12 @@ function RootComponent() {
       <body>
         <HeadContent />
         <Suspense>
-          <Header />
+          <AuthProvider>
+            <Header />
 
-          <Outlet />
-          <TanStackRouterDevtools />
+            <Outlet />
+            <TanStackRouterDevtools />
+          </AuthProvider>
         </Suspense>
         <Scripts />
       </body>

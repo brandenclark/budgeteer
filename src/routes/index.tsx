@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/solid-router'
-import { For } from 'solid-js'
+import { createFileRoute, Link } from '@tanstack/solid-router'
+import { For, Show } from 'solid-js'
 import {
   Zap,
   Server,
@@ -7,11 +7,14 @@ import {
   Shield,
   Waves,
   Sparkles,
+  LogOut,
 } from 'lucide-solid'
+import { useAuth } from '../lib/auth'
 
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
+  const auth = useAuth()
   const features = [
     {
       icon: <Zap class="w-12 h-12 text-cyan-400" />,
@@ -78,20 +81,56 @@ function App() {
             safety.
           </p>
           <div class="flex flex-col items-center gap-4">
+            <Show
+              when={auth.user()}
+              fallback={
+                <div class="flex gap-4">
+                  <Link
+                    to="/login"
+                    class="px-8 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    to="/dashboard"
+                    class="px-8 py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors border border-slate-600"
+                  >
+                    Dashboard
+                  </Link>
+                </div>
+              }
+            >
+              <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-lg px-6 py-4">
+                <p class="text-gray-300 mb-3">
+                  Signed in as:{' '}
+                  <span class="text-cyan-400 font-semibold">{auth.user()?.email}</span>
+                </p>
+                <div class="flex gap-3">
+                  <Link
+                    to="/dashboard"
+                    class="px-6 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors"
+                  >
+                    Go to Dashboard
+                  </Link>
+                  <button
+                    onClick={() => auth.signOut()}
+                    class="px-6 py-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <LogOut class="w-4 h-4" />
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            </Show>
+
             <a
               href="https://tanstack.com/start"
               target="_blank"
               rel="noopener noreferrer"
-              class="px-8 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyan-500/50"
+              class="text-cyan-400 hover:text-cyan-300 transition-colors"
             >
               Documentation
             </a>
-            <p class="text-gray-400 text-sm mt-2">
-              Begin your TanStack Start journey by editing{' '}
-              <code class="px-2 py-1 bg-slate-700 rounded text-cyan-400">
-                /src/routes/index.tsx
-              </code>
-            </p>
           </div>
         </div>
       </section>
