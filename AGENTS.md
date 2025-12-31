@@ -38,3 +38,30 @@ bd sync               # Sync with git
 - NEVER say "ready to push when you are" - YOU must push
 - If push fails, resolve and retry until it succeeds
 
+## Coding Standards
+
+### Solid.js Best Practices
+
+- **Use functional components** - Prefer function declarations over class components
+- **Use createSignal() for reactive state** - Solid's primary reactivity primitive
+- **Use .tsx extension for files with JSX** - Clear indication of JSX content
+- **Use type-safe context with createContext** - Proper typing for context
+- **Implement proper typing for event handlers** - Type safety throughout
+
+### Tailwind CSS Best Practices
+
+- **Utility-first CSS approach** - Compose styles from utility classes
+- **Use @apply directive** - Create reusable styles in CSS files
+- **Responsive design** - Utilize Tailwind's responsive classes (sm:, md:, lg:, etc.)
+- **Dark mode** - Implement using Tailwind's dark variant
+- **Global styles** - Use `/src/styles.css` for global styles
+- **Custom styles** - Use @layer directive for custom utilities
+- **JIT mode** - Just-In-Time compilation for faster development
+
+### TypeScript Standards
+
+- **Strict mode enabled** - Use TypeScript's strict mode
+- **Proper typing** - Follow TypeScript best practices and naming conventions
+- **Type assertions** - Use sparingly and only when necessary
+- **Strict checks** - Implement strict TypeScript checks throughout
+
