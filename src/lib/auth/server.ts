@@ -1,6 +1,6 @@
 'use server'
 
-import { redirect } from '@tanstack/react-router'
+import { redirect } from '@tanstack/solid-router'
 import { getSupabaseServerClient } from '../supabase'
 
 /**
@@ -45,9 +45,6 @@ export async function requireAuth() {
   if (!user) {
     throw redirect({
       to: '/login',
-      search: {
-        redirect: typeof window !== 'undefined' ? window.location.pathname : '/',
-      },
     })
   }
 

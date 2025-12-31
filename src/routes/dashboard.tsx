@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/solid-router'
-import { useAuth, requireAuth } from '../lib/auth'
+import { useAuth, requireAuthClient } from '../lib/auth'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async () => {
     // Protect this route - redirect to /login if not authenticated
-    await requireAuth()
+    await requireAuthClient()
   },
   component: DashboardPage,
 })

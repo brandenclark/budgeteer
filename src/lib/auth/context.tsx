@@ -1,4 +1,4 @@
-import { createContext, useContext, onMount, createSignal, JSX } from 'solid-js'
+import { createContext, useContext, onMount, createSignal, type ParentProps } from 'solid-js'
 import type { User, Session, AuthError } from '@supabase/supabase-js'
 import { getSupabaseBrowserClient } from '../supabase'
 
@@ -19,7 +19,7 @@ const AuthContext = createContext<AuthContextValue>()
  * Provides user, session, and auth methods to the component tree.
  * Handles session persistence and auth state changes.
  */
-export function AuthProvider(props: { children: JSX.Element }) {
+export function AuthProvider(props: ParentProps) {
   const supabase = getSupabaseBrowserClient()
   const [user, setUser] = createSignal<User | null>(null)
   const [session, setSession] = createSignal<Session | null>(null)
